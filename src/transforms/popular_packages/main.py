@@ -1,5 +1,5 @@
 import pyarrow as pa
-from subsets_utils import load_raw_json, upload_data, publish
+from subsets_utils import load_raw_json, sync_data, sync_metadata
 from .test import test
 
 DATASET_ID = "npm_popular_packages"
@@ -60,8 +60,8 @@ def run():
 
     test(table)
 
-    upload_data(table, DATASET_ID)
-    publish(DATASET_ID, METADATA)
+    sync_data(table, DATASET_ID)
+    sync_metadata(DATASET_ID, METADATA)
 
 
 if __name__ == "__main__":

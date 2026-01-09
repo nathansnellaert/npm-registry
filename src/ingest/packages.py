@@ -10,6 +10,7 @@ def run():
     """Fetch top packages from npm registry using search API."""
     state = load_state("npm_packages")
     all_packages = state.get("packages", [])
+    seen_names = set(state.get("seen_names", []))
     offset = state.get("offset", 0)
 
     if len(all_packages) >= TARGET_COUNT:
@@ -22,7 +23,7 @@ def run():
 
     while len(all_packages) < TARGET_COUNT:
         params = {
-            "text": "boost-exact:false",
+            "text": "js",
             "size": PAGE_SIZE,
             "from": offset,
             "quality": "0.0",
@@ -39,9 +40,13 @@ def run():
 
         for obj in data["objects"]:
             pkg = obj.get("package", {})
+            name = pkg.get("name")
+            if not name or name in seen_names:
+                continue
+            seen_names.add(name)
             score = obj.get("score", {})
             all_packages.append({
-                "name": pkg.get("name"),
+                "name": name,
                 "version": pkg.get("version"),
                 "description": pkg.get("description"),
                 "license": pkg.get("license"),
@@ -59,7 +64,7 @@ def run():
             })
 
         offset += PAGE_SIZE
-        save_state("npm_packages", {"packages": all_packages, "offset": offset})
+        save_state("npm_packages", {"packages": all_packages, "offset": offset, "seen_names": list(seen_names)})
         print(f"  Fetched {len(all_packages):,} packages (offset: {offset})")
 
         time.sleep(0.5)
