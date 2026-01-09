@@ -49,10 +49,10 @@ def run():
             "repository_url": pkg.get("repository_url") if pkg.get("repository_url") else None,
             "homepage_url": pkg.get("homepage_url") if pkg.get("homepage_url") else None,
             "npm_url": pkg.get("npm_url") if pkg.get("npm_url") else None,
-            "score_final": pkg.get("score_final"),
-            "score_quality": pkg.get("score_quality"),
-            "score_popularity": pkg.get("score_popularity"),
-            "score_maintenance": pkg.get("score_maintenance"),
+            "score_final": float(pkg["score_final"]) if pkg.get("score_final") is not None else None,
+            "score_quality": float(pkg["score_quality"]) if pkg.get("score_quality") is not None else None,
+            "score_popularity": float(pkg["score_popularity"]) if pkg.get("score_popularity") is not None else None,
+            "score_maintenance": float(pkg["score_maintenance"]) if pkg.get("score_maintenance") is not None else None,
         })
 
     print(f"  Transformed {len(records):,} packages")
