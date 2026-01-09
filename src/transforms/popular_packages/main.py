@@ -33,12 +33,16 @@ def run():
     raw = load_raw_json("popular_packages")
     print(f"  Loaded {len(raw):,} raw packages")
 
+    # Deduplicate by name, keeping first occurrence (most popular)
+    seen_names = set()
     records = []
     for pkg in raw:
-        if not pkg.get("name"):
+        name = pkg.get("name")
+        if not name or name in seen_names:
             continue
+        seen_names.add(name)
         records.append({
-            "name": pkg["name"],
+            "name": name,
             "version": pkg.get("version"),
             "description": pkg.get("description") if pkg.get("description") else None,
             "license": pkg.get("license") if pkg.get("license") else None,
